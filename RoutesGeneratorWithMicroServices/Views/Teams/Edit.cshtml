@@ -1,0 +1,70 @@
+﻿@model RoutesGeneratorWithMicroServices.Models.Team
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Team</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" required/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+				<label asp-for="Members" class="control-label"></label><br />
+				@{
+					<p> Add to team </p>
+					foreach (var person in ViewBag.People)
+					{
+						<input type="checkbox" id="NotTeamMembers" name="NotTeamMembers" value=@person.Id>
+
+						<label for="@person.Name"> @person.Name</label>
+
+						<br />
+					}
+
+					<p> Remove from team </p>
+					foreach (var person in ViewBag.TeamMembers)
+					{
+						<input type="checkbox" id="TeamMembers" name="TeamMembers" value=@person.Id>
+
+						<label for="@person.Name"> @person.Name</label>
+
+						<br />
+					}
+				}
+			</div>
+			<div class="form-group">
+				</><label asp-for="City" class="control-label"></label><br />
+				<select asp-for="City" id="City">
+					@{
+						foreach (var city in ViewBag.Cities)
+						{
+							<option value="@city.Id"> @city.Name - @city.FederativeUnit </option>
+						}
+					}
+				</select>
+				<span asp-validation-for="City" class="text-danger"></span>
+			</div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
