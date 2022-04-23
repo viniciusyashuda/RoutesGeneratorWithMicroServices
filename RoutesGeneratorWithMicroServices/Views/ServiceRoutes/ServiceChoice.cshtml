@@ -7,25 +7,23 @@
 <table class="table">
 	<form asp-action="CityChoice">
 
+		@{
+			List<string> headers = new();
+		}
 		@foreach (var service in ViewBag.Services)
 		{
 		<tr>
 			<td>
 				<label for="@service"> @service</label>
 			</td>
-			<td>
-				<a asp-action="CityChoice" asp-route-service="@service">Select</a>
-			</td>
-		</tr>
-		}
-		@foreach (var header in ViewBag.Headers)
-		{
-		<tr>
-			<td>
-			</td>
-			<td>
-				<label asp-route-headers="@header"></label>
-			</td>
+				@foreach (var header in ViewBag.SelectedHeaders)
+				{
+					headers.Add(header);
+				}
+				<td>
+					<a asp-action="CityChoice" asp-route-service="@service" asp-route-headers="@headers.Find(x => x == "CIDADE")">Select</a>
+				</td>
+				
 		</tr>
 		}
 	</form>
