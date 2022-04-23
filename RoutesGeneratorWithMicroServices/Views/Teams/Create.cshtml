@@ -22,7 +22,7 @@
 				@{
 					foreach (var person in ViewBag.People)
 					{
-						<input type="radio" id="Members" name="Members" value=@person.Id checked>
+						<input type="checkbox" id="Members" name="Members" value=@person.Id checked>
 						<label for="@person.Name"> @person.Name</label>
 						<br />
 					}

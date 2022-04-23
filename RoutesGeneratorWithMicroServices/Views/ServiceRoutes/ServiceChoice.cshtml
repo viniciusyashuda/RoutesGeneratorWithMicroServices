@@ -1,0 +1,32 @@
+﻿@{
+	ViewData["Title"] = "ServiceChoice";
+}
+
+<h1>ServiceChoice</h1>
+
+<table class="table">
+	<form asp-action="CityChoice">
+
+		@foreach (var service in ViewBag.Services)
+		{
+		<tr>
+			<td>
+				<label for="@service"> @service</label>
+			</td>
+			<td>
+				<a asp-action="CityChoice" asp-route-service="@service">Select</a>
+			</td>
+		</tr>
+		}
+		@foreach (var header in ViewBag.Headers)
+		{
+		<tr>
+			<td>
+			</td>
+			<td>
+				<label asp-route-headers="@header"></label>
+			</td>
+		</tr>
+		}
+	</form>
+</table>
