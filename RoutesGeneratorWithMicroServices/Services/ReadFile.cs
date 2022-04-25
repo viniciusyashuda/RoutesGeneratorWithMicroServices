@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using OfficeOpenXml;
 
 namespace RoutesGeneratorWithMicroServices.Services
@@ -27,7 +29,7 @@ namespace RoutesGeneratorWithMicroServices.Services
         public static List<IDictionary<string, string>> ReadExcelFile(List<string> columns, string pathWebRoot)
         {
             List<string> plan = new();
-            List<IDictionary<string, string>> listDictonary = new();
+            List<IDictionary<string, string>> listDictionary = new();
 
             FileInfo excelFile = new FileInfo(pathWebRoot + "\\file\\Plan220258188.xlsx");
 
@@ -61,11 +63,11 @@ namespace RoutesGeneratorWithMicroServices.Services
 
                     }
                     if (data.Count > 1)
-                        listDictonary.Add(data);
+                        listDictionary.Add(data);
                 }
             }
 
-            return listDictonary;
+            return listDictionary;
         }
 
         public static List<string> ReadColumn(string columnName, string pathWebRoot)

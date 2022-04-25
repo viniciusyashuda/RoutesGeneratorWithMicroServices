@@ -14,5 +14,6 @@ namespace RoutesGeneratorWithMicroServices.Data
         public DbSet<RoutesGeneratorWithMicroServices.Models.Person> Person { get; set; }
         public DbSet<RoutesGeneratorWithMicroServices.Models.Team> Team { get; set; }
         public DbSet<RoutesGeneratorWithMicroServices.Models.FileReceiver> FileReceiver { get; set; }
+        public DbSet<RoutesGeneratorWithMicroServices.Models.User> User { get; set; }
     }
 }

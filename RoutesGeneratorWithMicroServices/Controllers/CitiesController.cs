@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoutesGeneratorWithMicroServices.Data;
@@ -7,6 +8,7 @@ using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
+    //[Authorize]
     public class CitiesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,6 +21,29 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // GET: Cities
         public async Task<IActionResult> Index()
         {
+            string user = "Anonymous";
+            bool authenticate = false;
+
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                user = HttpContext.User.Identity.Name;
+                authenticate = true;
+
+                if (HttpContext.User.IsInRole("Admin"))
+                    ViewBag.Role = "Admin";
+                else
+                    ViewBag.Role = "User";
+            }
+            else
+            {
+                user = "Not logged!";
+                authenticate = false;
+                ViewBag.Role = "";
+            }
+
+            ViewBag.User = user;
+            ViewBag.Authenticate = authenticate;
+            
             return View(await CityQueries.GetAllCities());
         }
 

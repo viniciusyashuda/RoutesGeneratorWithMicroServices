@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoutesGeneratorWithMicroServices.Data;
@@ -7,6 +8,7 @@ using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
+    [Authorize]
     public class PeopleController : Controller
     {
         private readonly ApplicationDbContext _context;

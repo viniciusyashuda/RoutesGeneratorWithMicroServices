@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoutesGeneratorWithMicroServices.Data;
@@ -9,6 +10,7 @@ using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
+    [Authorize]
     public class TeamsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -139,7 +141,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             team.Name = team_name;
 
             string cityId = Request.Form["City"].ToString();
-            team.City = team.City = await CityQueries.GetCityById(cityId); 
+            team.City = team.City = await CityQueries.GetCityById(cityId);
 
             var notTeamMembersId = Request.Form["NotTeamMembers"].ToList();
             var teamMembersId = Request.Form["TeamMembers"].ToList();
@@ -150,7 +152,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                     Person member = await PersonQueries.GetPersonById(memberId);
                     team.Members.Remove(team.Members.Find(memberToRemove => memberToRemove.Id == memberId));
                     member.Status = "No team";
-                    PersonQueries.UpdatePerson(memberId,member);
+                    PersonQueries.UpdatePerson(memberId, member);
                 }
 
             foreach (var notMemberId in notTeamMembersId)
