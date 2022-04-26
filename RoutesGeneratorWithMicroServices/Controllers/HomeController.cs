@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -48,7 +48,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var users = await UserQueries.GetAllUsers();
             if (users.Count < 1)
             {
-                UserQueries.PostUser(new User() { Login = "Admin", Password = "Admin", Role = "Admin" });
+                UserQueries.PostUser(new User() { Name = "Admin", Login = "Admin", Password = "Admin", Role = "Admin" });
                 ViewBag.User = "Admin";
                 ViewBag.Role = "Admin";
                 ViewBag.Authenticate = true;
