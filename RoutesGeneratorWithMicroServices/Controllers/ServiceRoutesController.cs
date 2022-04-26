@@ -9,7 +9,7 @@ using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
-   // [Authorize]
+    [Authorize]
     public class ServiceRoutesController : Controller
     {
         IWebHostEnvironment _appEnvironment;
@@ -20,6 +20,28 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         }
         public IActionResult Index()
         {
+            string user = "Anonymous";
+            bool authenticate = false;
+
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                user = HttpContext.User.Identity.Name;
+                authenticate = true;
+
+                if (HttpContext.User.IsInRole("Admin"))
+                    ViewBag.Role = "Admin";
+                else
+                    ViewBag.Role = "User";
+            }
+            else
+            {
+                user = "Not logged!";
+                authenticate = false;
+                ViewBag.Role = "";
+            }
+
+            ViewBag.User = user;
+            ViewBag.Authenticate = authenticate;
             ViewBag.Headers = ReadFile.ReadHeader(_appEnvironment.WebRootPath);
             return View();
         }
@@ -58,6 +80,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             var selectedHeaders = Request.Form["headers"].ToList();
             var servicerequest = Request.Form["service"].ToString();
+            city = Request.Form["city"].ToString();
 
             var teams = await TeamQueries.GetAllTeams();
             List<Team> teamsInCity = new();
@@ -80,12 +103,22 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var servicerequest = Request.Form["service"].ToString();
             var cityrequest = Request.Form["city"].ToString();
             var teams = Request.Form["team"].ToList();
-            
+
             var service = servicerequest.Replace(",", "");
             var city = cityrequest.Replace(",", "");
 
             new WriteFile().WriteDocxFile(selectedHeaders, teams, service, city, _appEnvironment.WebRootPath);
-            return RedirectToAction(nameof(Index));
+            TempData["success"] = "Documento gerado com sucesso!";
+            return View();
+        }
+
+        public FileResult Download()
+        {
+            var folder = _appEnvironment.WebRootPath + "\\file\\";
+            var pathFinal = folder + "RoutesRelatory.docx";
+            byte[] bytes = System.IO.File.ReadAllBytes(pathFinal);
+            string contentType = "application/octet-stream";
+            return File(bytes, contentType, "RoutesRelatory.docx");
         }
 
     }

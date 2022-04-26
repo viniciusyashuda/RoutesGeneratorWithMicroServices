@@ -2,7 +2,7 @@
 	ViewData["Title"] = "ServiceChoice";
 }
 
-<h1>ServiceChoice</h1>
+<h1>Escolha do Serviço</h1>
 
 <table class="table">
 	<form asp-action="CityChoice">
@@ -17,12 +17,13 @@
 
 			@foreach (var service in ViewBag.Services)
 			{
-				<label value="@service" for="@service" id="service" name="service">@service</label>
-				<input type="hidden" value="@service" for="@service" id="service" name="service" />
-				<div class="form-group">
-					<input type="submit" value="CityChoice" class="btn btn-primary" />
-				</div>
+				<label value="@service" for="@service">@service</label>
+				<input type="radio" value="@service" for="@service" id="service" name="service" />
+				<br/>
 			}
+			<div class="form-group">
+				<input type="submit" value="Continuar" class="btn btn-primary" />
+			</div>
 		</div>
 	</form>
 </table>

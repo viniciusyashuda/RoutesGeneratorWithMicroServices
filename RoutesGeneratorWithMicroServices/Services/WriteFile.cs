@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using RoutesGeneratorWithMicroServices.Models;
+using System.Text;
 
 namespace RoutesGeneratorWithMicroServices.Services
 {
@@ -31,9 +30,10 @@ namespace RoutesGeneratorWithMicroServices.Services
             List<string> others = new();
             string os = "", @base = "", cep = "", address = "", number = "", district = "", complement = "";
             int count = 0;
-            string path = pathWebRoot+"\\file\\RoutesRelatory.docx";
+            int teamCount = 0;
+            string path = pathWebRoot + "\\file\\RoutesRelatory.docx";
 
-            using (StreamWriter streamwriter = new StreamWriter(path))
+            using (StreamWriter streamwriter = new StreamWriter(path, false, Encoding.GetEncoding("iso-8859-1")))
             {
                 foreach (var item in services)
                 {
@@ -60,21 +60,28 @@ namespace RoutesGeneratorWithMicroServices.Services
                     while (count < servicesPerTeam)
                     {
                         string line = "";
-                        string othersString;
-                        if (others.Count == 0)
-                            othersString = "";
-                        else
-                            othersString = others.ToString();
+                        string othersString = "";
 
-                        line = "ROTA TRABALHO - " + DateTime.Now.ToShortDateString() + "\n\n"
+                        foreach (var other in others)
+                        {
+                            othersString = othersString + other;
+                        }
+
+                        line = "\n\nROTA TRABALHO - " + DateTime.Now.ToShortDateString() + "\n\n"
                             + $"\nSERVIÇO: {service}"
-                            + $"\nTIME: {teams[count]}, " + $"CIDADE: {city}"
+                            + $"\nTIME: {teams[teamCount]}, " + $"CIDADE: {city}"
                             + $"\n{@base}"
                             + $"\n{address}, {number}   {cep}"
                             + $"\n{district}, {complement}"
                             + $"\n{othersString}";
 
                         count++;
+
+                        if (teamCount < teams.Count - 1 && count == 21)
+                        {
+                            count = 0;
+                            teamCount++;
+                        }
                         streamwriter.WriteLine(line);
                     }
                 }

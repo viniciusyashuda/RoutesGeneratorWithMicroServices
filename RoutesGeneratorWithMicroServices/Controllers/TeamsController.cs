@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RoutesGeneratorWithMicroServices.Data;
 using RoutesGeneratorWithMicroServices.Models;
 using RoutesGeneratorWithMicroServices.Services;
 
@@ -13,16 +12,31 @@ namespace RoutesGeneratorWithMicroServices.Controllers
     [Authorize]
     public class TeamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public TeamsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Teams
         public async Task<IActionResult> Index()
         {
+            string user = "Anonymous";
+            bool authenticate = false;
+
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                user = HttpContext.User.Identity.Name;
+                authenticate = true;
+
+                if (HttpContext.User.IsInRole("Admin"))
+                    ViewBag.Role = "Admin";
+                else
+                    ViewBag.Role = "User";
+            }
+            else
+            {
+                user = "Not logged!";
+                authenticate = false;
+                ViewBag.Role = "";
+            }
+
+            ViewBag.User = user;
+            ViewBag.Authenticate = authenticate;
             return View(await TeamQueries.GetAllTeams());
         }
 
@@ -31,12 +45,14 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             if (id == null)
             {
+                TempData["error"] = "Time não encotrado!";
                 return NotFound();
             }
 
             var team = await TeamQueries.GetTeamById(id);
             if (team == null)
             {
+                TempData["error"] = "Time não encontrado!";
                 return NotFound();
             }
 
@@ -86,6 +102,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             if (ModelState.IsValid)
             {
                 TeamQueries.PostTeam(team);
+                TempData["success"] = "Time criado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             return View(team);
@@ -96,12 +113,14 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             if (id == null)
             {
+                TempData["error"] = "O Id é necessário para a ação!";
                 return NotFound();
             }
 
             var team = await TeamQueries.GetTeamById(id);
             if (team == null)
             {
+                TempData["error"] = "Time não encotrado!";
                 return NotFound();
             }
 
@@ -133,6 +152,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             if (id != team.Id)
             {
+                TempData["error"] = "O Id passado não é valido!";
                 return NotFound();
             }
 
@@ -163,11 +183,13 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 try
                 {
                     TeamQueries.UpdateTeam(id, team);
+                    TempData["success"] = "Time editado com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (TeamExists(team.Id) == null)
                     {
+                        TempData["error"] = "Time não existe!";
                         return NotFound();
                     }
                     else
@@ -185,12 +207,14 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             if (id == null)
             {
+                TempData["error"] = "O Id é necessario para a ação!";
                 return NotFound();
             }
 
             var team = await TeamQueries.GetTeamById(id);
             if (team == null)
             {
+                TempData["error"] = "Time não encontrado!";
                 return NotFound();
             }
 
@@ -204,9 +228,13 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             var team = await TeamQueries.GetTeamById(id);
             if (team == null)
+            {
+                TempData["error"] = "Time não encontrado!";
                 return NotFound();
+            }
 
             TeamQueries.DeleteTeam(id);
+            TempData["success"] = "Time excluído com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

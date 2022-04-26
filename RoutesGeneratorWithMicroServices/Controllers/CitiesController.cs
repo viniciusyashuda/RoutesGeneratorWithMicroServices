@@ -2,22 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RoutesGeneratorWithMicroServices.Data;
 using RoutesGeneratorWithMicroServices.Models;
 using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class CitiesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public CitiesController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Cities
         public async Task<IActionResult> Index()
         {
@@ -43,7 +35,6 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 
             ViewBag.User = user;
             ViewBag.Authenticate = authenticate;
-            
             return View(await CityQueries.GetAllCities());
         }
 
@@ -51,11 +42,17 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
+            {
+                TempData["error"] = "O Id é necessário para a ação!";
                 return NotFound();
+            }
 
             var city = await CityQueries.GetCityById(id);
             if (city == null)
+            {
+                TempData["error"] = "Cidade não encontrada!";
                 return NotFound();
+            }
 
             return View(city);
         }
@@ -76,6 +73,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             if (ModelState.IsValid)
             {
                 CityQueries.PostCity(city);
+                TempData["success"] = "Cidade criada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             return View(city);
@@ -85,11 +83,17 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
+            {
+                TempData["error"] = "O Id é necessário para a ação!";
                 return NotFound();
+            }
 
             var city = await CityQueries.GetCityById(id);
             if (city == null)
+            {
+                TempData["error"] = "Cidade não encontrada!";
                 return NotFound();
+            }
 
             return View(city);
         }
@@ -102,18 +106,25 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public IActionResult Edit(string id, [Bind("Id,Name,FederativeUnit")] City city)
         {
             if (id != city.Id)
+            {
+                TempData["error"] = "O Id passado não é válido!";
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     CityQueries.UpdateCity(id, city);
+                    TempData["success"] = "Cidade editada com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (CityExists(city.Id) == null)
+                    {
+                        TempData["error"] = "Cidade não existe!";
                         return NotFound();
+                    }
                     else
                         throw;
                 }
@@ -126,11 +137,17 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
+            {
+                TempData["error"] = "O Id é necessário para a ação!";
                 return NotFound();
+            }
 
             var city = await CityQueries.GetCityById(id);
             if (city == null)
+            {
+                TempData["error"] = "Cidade não encontrada!";
                 return NotFound();
+            }
 
             return View(city);
         }
@@ -142,9 +159,13 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             var city = await CityQueries.GetCityById(id);
             if (city == null)
+            {
+                TempData["error"] = "Cidade não encontrada!";
                 return NotFound();
+            }
 
             CityQueries.DeleteCity(id);
+            TempData["success"] = "Cidade excluída com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

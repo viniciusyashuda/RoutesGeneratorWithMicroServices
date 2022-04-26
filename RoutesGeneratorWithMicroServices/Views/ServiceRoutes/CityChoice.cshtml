@@ -2,7 +2,7 @@
 	ViewData["Title"] = "CityChoice";
 }
 
-<h1>CityChoice</h1>
+<h1>Escolha da Cidade</h1>
 
 <table class="table">
 	<form asp-action="TeamsChoice">
@@ -24,11 +24,12 @@
 			@foreach (var city in ViewBag.Cities)
 			{
 				<label value="@city" for="@city" id="city" name="city">@city</label>
-				<input type="hidden" value="@city" for="@city" id="city" name="city" />
-				<div class="form-group">
-					<input type="submit" value="TeamsChoice" class="btn btn-primary" />
-				</div>
+				<input type="radio" value="@city" for="@city" id="city" name="city" />
+				<br />
 			}
+			<div class="form-group">
+				<input type="submit" value="Continuar" class="btn btn-primary" />
+			</div>
 		</div>
 	</form>
 </table>

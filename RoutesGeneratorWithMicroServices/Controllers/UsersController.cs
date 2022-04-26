@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using RoutesGeneratorWithMicroServices.Data;
 using RoutesGeneratorWithMicroServices.Models;
 using RoutesGeneratorWithMicroServices.Services;
 
@@ -15,16 +11,31 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public UsersController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: Users
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
+            string user = "Anonymous";
+            bool authenticate = false;
+
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                user = HttpContext.User.Identity.Name;
+                authenticate = true;
+
+                if (HttpContext.User.IsInRole("Admin"))
+                    ViewBag.Role = "Admin";
+                else
+                    ViewBag.Role = "User";
+            }
+            else
+            {
+                user = "Not logged!";
+                authenticate = false;
+                ViewBag.Role = "";
+            }
+
+            ViewBag.User = user;
+            ViewBag.Authenticate = authenticate;
             return View();
         }
 
@@ -37,7 +48,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 
             var userFound = await UserQueries.GetUserByLogin(user.Login);
 
-            if(userFound != null && userFound.Password == user.Password)
+            if (userFound != null && userFound.Password == user.Password)
             {
                 List<Claim> userClaim = new()
                 {
@@ -57,6 +68,13 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction(nameof(Index));
+        }
         // GET: Users/Details/5
         public async Task<IActionResult> Details(string id)
         {
@@ -75,8 +93,14 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         }
 
         // GET: Users/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user_aux = await UserQueries.GetUserByLogin(HttpContext.User.Identity.Name);
+            if (user_aux == null || user_aux.Role != "Admin")
+            {
+                TempData["error"] = "Usuário não permitido!";
+                return RedirectToAction(nameof(Index));
+            }
             return View();
         }
 
@@ -85,11 +109,12 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Login,Password")] User user)
+        public IActionResult Create([Bind("Id,Name,Login,Password")] User user)
         {
             if (ModelState.IsValid)
             {
                 UserQueries.PostUser(user);
+                TempData["success"] = "Usuário criado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -116,7 +141,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Login,Password")] User user)
+        public IActionResult Edit(string id, [Bind("Id,Name,Login,Password")] User user)
         {
             if (id != user.Id)
             {

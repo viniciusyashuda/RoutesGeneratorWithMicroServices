@@ -1,36 +1,53 @@
 ﻿@model RoutesGeneratorWithMicroServices.Models.User
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
+	string test = @ViewBag.Role;
 }
 
-<h1>Index</h1>
+<h1>Índice</h1>
+@if (ViewBag.Authenticate)
+{
+	<div class="col-2 text-center">
+		Olá, <strong>@ViewBag.User!</strong>
+		<form method="post" asp-controller="Users" asp-action="Logout">
+			<u><input class="btn btn-link text-dark pb-1" type="submit" value="Sair?" /></u>
+		</form>
+	</div>
+		<p>
+			<a asp-action="Create">Criar conta</a>
+		</p>
+}
+else
+{
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="Login">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group">
+					<label asp-for="Login" class="control-label"></label>
+					<input asp-for="Login" class="form-control" />
+					<span asp-validation-for="Login" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="Password" class="control-label"></label>
+					<input type="password" asp-for="Password" class="form-control" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Entrar" class="btn btn-primary" />
+				</div>
+			</form>
+		</div>
+	</div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Login">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Login" class="control-label"></label>
-                <input asp-for="Login" class="form-control" />
-                <span asp-validation-for="Login" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+	<div>
+		<a asp-action="Create">Registrar</a>
+	</div>
 
-<div>
-    <a asp-action="Create">Register</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@section Scripts {
+    @{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
 }
