@@ -46,19 +46,19 @@ namespace RoutesGeneratorWithMicroServices.Services
                         else if (header == "CEP")
                             cep = header + ": " + item[header];
                         else if (header == "ENDEREÇO")
-                            address = header + ": " + item[header];
+                            address = header + ": " + item[header] + ",";
                         else if (header == "NUMERO")
                             number = header + ": " + item[header];
                         else if (header == "BAIRRO")
-                            district = header + ": " + item[header];
+                            district = header + ": " + item[header] + ",";
                         else if (header == "COMPLEMENTO")
                             complement = header + ": " + item[header];
                         else if (headers.Count > 9 && header != "SERVIÇO" && header != "CIDADE")
                             others.Add("\n" + header + ": " + item[header]);
                     }
-
-                    while (count < servicesPerTeam)
+                    if (count < servicesPerTeam)
                     {
+
                         string line = "";
                         string othersString = "";
 
@@ -71,13 +71,13 @@ namespace RoutesGeneratorWithMicroServices.Services
                             + $"\nSERVIÇO: {service}"
                             + $"\nTIME: {teams[teamCount]}, " + $"CIDADE: {city}"
                             + $"\n{@base}"
-                            + $"\n{address}, {number}   {cep}"
-                            + $"\n{district}, {complement}"
+                            + $"\n{address} {number}   {cep}"
+                            + $"\n{district} {complement}"
                             + $"\n{othersString}";
 
                         count++;
 
-                        if (teamCount < teams.Count - 1 && count == 21)
+                        if (teamCount < teams.Count - 1 && count == servicesPerTeam)
                         {
                             count = 0;
                             teamCount++;
