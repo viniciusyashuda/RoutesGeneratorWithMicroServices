@@ -20,7 +20,7 @@ namespace RoutesGeneratorWithMicroServices.Services
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[PositionID: 0];
                 int columnCount = worksheet.Dimension.End.Column;
 
-                for (int column = 1; column < columnCount; column++)
+                for (int column = 1; column < columnCount + 1; column++)
                     header.Add(worksheet?.Cells[Row: 1, column]?.Value?.ToString());
             }
             return header;
@@ -48,7 +48,7 @@ namespace RoutesGeneratorWithMicroServices.Services
                 {
                     data = new Dictionary<string, string>();
 
-                    for (int col = 1; col < total_columns; col++)
+                    for (int col = 1; col < total_columns + 1; col++)
                     {
                         columns.ForEach(column =>
                         {
@@ -85,7 +85,7 @@ namespace RoutesGeneratorWithMicroServices.Services
                 int total_columns = worksheet.Dimension.End.Column;
                 int total_rows = worksheet.Dimension.End.Row;
 
-                for (int column = 1; column < total_columns; column++)
+                for (int column = 1; column < total_columns + 1; column++)
                 {
                     if (worksheet.Cells[1, column].Value.ToString() == columnName)
                         for (int row = 2; row < total_rows; row++)
@@ -99,6 +99,31 @@ namespace RoutesGeneratorWithMicroServices.Services
             }
 
             return columnContent;
+        }
+
+        public static void OrderFile(string path)
+        {
+            List<string> headerExcel = new();
+            FileInfo excelFile = new FileInfo(path);
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using (ExcelPackage package = new(excelFile))
+            {
+                ExcelWorkbook wb = package.Workbook;
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                int cols = worksheet.Dimension.End.Column;
+                int rows = worksheet.Dimension.End.Row;
+                int colCep = 0;
+                for (int col = 1; col <= cols; col++)
+                {
+                    if (worksheet.Cells[1, col].Value.ToString().ToUpper() == "CEP")
+                    {
+                        colCep = col - 1;
+                        break;
+                    }
+                }
+                worksheet.Cells[2, 1, rows, cols].Sort(colCep, false);
+                package.Save();
+            }
         }
     }
 }

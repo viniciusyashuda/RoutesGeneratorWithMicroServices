@@ -18,7 +18,7 @@
 			@foreach (var service in ViewBag.Services)
 			{
 				<label value="@service" for="@service">@service</label>
-				<input type="radio" value="@service" for="@service" id="service" name="service" />
+				<input type="radio" value="@service" for="@service" id="service" name="service" checked/>
 				<br/>
 			}
 			<div class="form-group">

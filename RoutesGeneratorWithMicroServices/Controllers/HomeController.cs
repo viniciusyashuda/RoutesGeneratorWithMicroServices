@@ -110,7 +110,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _hostEnvironment.WebRootPath;
-                string fileName = Path.GetFileNameWithoutExtension(fileReceived.FileName);
+                string fileName = "Plan";
                 string extension = Path.GetExtension(fileReceived.File.FileName);
                 fileReceived.FileName = fileName = fileName + extension;
                 string path = Path.Combine(wwwRootPath + "/file", fileName);
@@ -119,6 +119,8 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 {
                     await fileReceived.File.CopyToAsync(fileStream);
                 }
+
+                ReadFile.OrderFile(path);
 
                 return RedirectToAction(nameof(Index));
             }

@@ -51,6 +51,20 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var selectedHeaders = Request.Form["Column"].ToList();
             List<string> services = new();
 
+            if (!selectedHeaders.Contains("OS") ||
+                !selectedHeaders.Contains("CIDADE") ||
+                !selectedHeaders.Contains("BASE") ||
+                !selectedHeaders.Contains("SERVIÇO") ||
+                !selectedHeaders.Contains("ENDEREÇO") ||
+                !selectedHeaders.Contains("NUMERO") ||
+                !selectedHeaders.Contains("COMPLEMENTO") ||
+                !selectedHeaders.Contains("CEP") ||
+                !selectedHeaders.Contains("BAIRRO"))
+            {
+                TempData["error"] = "As colunas: OS, CIDADE, BASE, SERVIÇO, ENDEREÇO, NUMERO, COMPLEMENTO, CEP E BAIRRO são obrigatórias!";
+                return RedirectToAction(nameof(Index));
+            }
+
             foreach (var header in selectedHeaders)
                 if (header == "SERVIÇO" || header == "SERVICO")
                     services = ReadFile.ReadColumn(header, _appEnvironment.WebRootPath);
@@ -80,7 +94,6 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             var selectedHeaders = Request.Form["headers"].ToList();
             var servicerequest = Request.Form["service"].ToString();
-            city = Request.Form["city"].ToString();
 
             var teams = await TeamQueries.GetAllTeams();
             List<Team> teamsInCity = new();
@@ -106,6 +119,12 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 
             var service = servicerequest.Replace(",", "");
             var city = cityrequest.Replace(",", "");
+
+            if(teams.Count == 0)
+            {
+                TempData["error"] = "Ao menos um time deve ser selecionado!";
+                return RedirectToAction(nameof(Index));
+            }
 
             new WriteFile().WriteDocxFile(selectedHeaders, teams, service, city, _appEnvironment.WebRootPath);
             TempData["success"] = "Documento gerado com sucesso!";

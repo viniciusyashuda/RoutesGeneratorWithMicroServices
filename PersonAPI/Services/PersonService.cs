@@ -60,7 +60,9 @@ namespace PersonAPI.Services
         public void Remove(Person personIn) =>
             _person.DeleteOne(person => person.Id == personIn.Id);
 
-        public void Remove(string id) =>
+        public void Remove(string id)
+        {
             _person.DeleteOne(person => person.Id == id);
+        }
     }
 }
