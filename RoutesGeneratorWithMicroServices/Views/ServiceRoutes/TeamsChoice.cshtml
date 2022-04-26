@@ -1,0 +1,41 @@
+﻿@model RoutesGeneratorWithMicroServices.Models.Team
+
+@{
+	ViewData["Title"] = "TeamsChoice";
+}
+
+<h1>Escolha dos times</h1>
+
+<table class="table">
+	<form asp-action="GenerateDocx">
+		<div class="form-group">
+			@foreach (var team in ViewBag.TeamsToWrite)
+			{
+				<input type="checkbox" id="team" name="team" value=@team.Name >
+				<label for="@team.Name"> @team.Name </label>
+				<br />
+			}
+		</div>
+		<div class="form-group">
+			@foreach (var header in ViewBag.HeadersToWrite)
+			{
+				<input type="hidden" value="@header" for="@header" id="headers" name="headers" />
+			}
+		</div>
+		<div class="form-group">
+			@foreach (var service in ViewBag.ServiceToWrite)
+			{
+				<input type="hidden" value="@service" for="@service" id="service" name="service" />
+			}
+		</div>
+		<div class="form-group">
+			@foreach (var city in ViewBag.CityToWrite)
+			{
+				<input type="hidden" value="@city" for="@city" id="city" name="city" />
+			}
+		</div>
+		<div class="form-group">
+			<input type="submit" value="Gerar documento" class="btn btn-primary" />
+		</div>
+	</form>
+</table>

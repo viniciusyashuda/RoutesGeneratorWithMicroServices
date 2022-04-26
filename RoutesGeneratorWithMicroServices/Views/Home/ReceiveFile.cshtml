@@ -1,0 +1,56 @@
+﻿@model RoutesGeneratorWithMicroServices.Models.FileReceiver
+
+@{
+	ViewData["Title"] = "ReceiveFile";
+}
+
+<h1>Arquivo</h1>
+@if (!ViewBag.Authenticate)
+{
+	<div class="row">
+		<div class="col-md-12">
+			<span>Usuário não está logado no sistema!</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<form method="post" asp-controller="Users" asp-action="Index">
+				<input type="submit" value="Entrar" class="btn btn-primary">
+			</form>
+		</div>
+	</div>
+}
+else
+{
+	<hr />
+	<div class="row">
+		<div class="col-md-4">
+			<form asp-action="ReceiveFile" enctype="multipart/form-data">
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div class="form-group">
+					<label asp-for="FileName" class="control-label"></label>
+					<input asp-for="FileName" class="form-control" required />
+					<span asp-validation-for="FileName" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="File" class="control-label"></label>
+					<input asp-for="File" class="form-control" required />
+					<span asp-validation-for="File" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Enviar" class="btn btn-primary" />
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div>
+		<a asp-action="Index">Menu Principal</a>
+	</div>
+
+	@section Scripts {
+    @{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
+}

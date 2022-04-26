@@ -1,24 +1,40 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RoutesGeneratorWithMicroServices.Data;
 using RoutesGeneratorWithMicroServices.Models;
 using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
+    [Authorize]
     public class PeopleController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public PeopleController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         // GET: People
         public async Task<IActionResult> Index()
         {
+            string user = "Anonymous";
+            bool authenticate = false;
+
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                user = HttpContext.User.Identity.Name;
+                authenticate = true;
+
+                if (HttpContext.User.IsInRole("Admin"))
+                    ViewBag.Role = "Admin";
+                else
+                    ViewBag.Role = "User";
+            }
+            else
+            {
+                user = "Not logged!";
+                authenticate = false;
+                ViewBag.Role = "";
+            }
+
+            ViewBag.User = user;
+            ViewBag.Authenticate = authenticate;
             return View(await PersonQueries.GetAllPeople());
         }
 
@@ -26,11 +42,17 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
+            {
+                TempData["error"] = "O Id é necessario para a ação!";
                 return NotFound();
+            }
 
             var person = await PersonQueries.GetPersonById(id);
             if (person == null)
+            {
+                TempData["error"] = "Pessoa não encontrada!";
                 return NotFound();
+            }
 
             return View(person);
         }
@@ -51,6 +73,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             if (ModelState.IsValid)
             {
                 PersonQueries.PostPerson(person);
+                TempData["success"] = "Pessoa criada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             return View(person);
@@ -60,11 +83,17 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
+            {
+                TempData["error"] = "O Id é necessário para a ação!";
                 return NotFound();
+            }
 
             var person = await PersonQueries.GetPersonById(id);
             if (person == null)
+            {
+                TempData["error"] = "Pessoa não encontrada!";
                 return NotFound();
+            }
 
             return View(person);
         }
@@ -77,18 +106,25 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public IActionResult Edit(string id, [Bind("Id,Name,Status")] Person person)
         {
             if (id != person.Id)
+            {
+                TempData["error"] = "O Id passado não é válido!";
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     PersonQueries.UpdatePerson(id, person);
+                    TempData["success"] = "Pessoa editada com sucesso!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (PersonExists(person.Id) == null)
+                    {
+                        TempData["error"] = "Pessoa não existe!";
                         return NotFound();
+                    }
                     else
                         throw;
                 }
@@ -101,11 +137,17 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
+            {
+                TempData["error"] = "O Id é necessario para a ação!";
                 return NotFound();
+            }
 
             var person = await PersonQueries.GetPersonById(id);
             if (person == null)
+            {
+                TempData["error"] = "Pessoa não encontrada!";
                 return NotFound();
+            }
 
             return View(person);
         }
@@ -117,9 +159,13 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         {
             var person = await PersonQueries.GetPersonById(id);
             if (person == null)
+            {
+                TempData["error"] = "Pessoa não encontrada!";
                 return NotFound();
+            }
 
             PersonQueries.DeletePerson(id);
+            TempData["success"] = "Pessoa excluída com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 

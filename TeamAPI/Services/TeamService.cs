@@ -99,7 +99,16 @@ namespace TeamAPI.Services
         public void Remove(Team teamIn) =>
             _team.DeleteOne(team => team.Id == teamIn.Id);
 
-        public void Remove(string id) =>
+        public void Remove(string id)
+        {
+            var team = Get(id);
+
+            foreach (var member in team.Members)
+            {
+                member.Status = "No team";
+                PersonQueries.UpdatePersonStatus(member.Name, member);
+            }
             _team.DeleteOne(team => team.Id == id);
+        }
     }
 }

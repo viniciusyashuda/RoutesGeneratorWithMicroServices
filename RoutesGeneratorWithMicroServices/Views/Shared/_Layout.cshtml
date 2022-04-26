@@ -1,5 +1,17 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@{
+	string error = null;
+	if (TempData["error"] != null)
+	{
+		error = (string)TempData["error"];
+	}
+	string success = null;
+	if (TempData["success"] != null)
+	{
+		success = (string)TempData["success"];
+	}
+}
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,28 +31,80 @@
 				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 					<ul class="navbar-nav flex-grow-1">
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Menu</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="People" asp-action="Index">Pessoas</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="People" asp-action="Index">People</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cidades</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="Teams" asp-action="Index">Times</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Teams" asp-action="Index">Teams</a>
+							<a class="nav-link text-dark" asp-area="" asp-controller="ServiceRoutes" asp-action="Index">Rotas de Serviço</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Login</a>
 						</li>
 					</ul>
-					<partial name="_LoginPartial" />
 				</div>
 			</div>
+			@if (string.IsNullOrEmpty(@ViewBag.Role))
+			{
+				<div class="col-2 text-center">
+					Olá, <strong>Visitante!</strong>
+					<form method="post" asp-controller="Users" asp-action="Index">
+						<input class="btn btn-link text-muted pb-1" type="submit" value="Entrar" />
+					</form>
+				</div>
+			}
+			else
+			{
+				<div class="col-2 text-center">
+					Olá, <strong>@ViewBag.User!</strong>
+					<form method="post" asp-controller="Users" asp-action="Logout">
+						<u><input class="btn btn-link text-dark pb-1" type="submit" value="Sair?" /></u>
+					</form>
+				</div>
+			}
 		</nav>
 	</header>
 	<div class="container">
 		<main role="main" class="pb-3">
+			<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">ERRO!</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p>@error</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">SUCESSO!</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p>@success</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+						</div>
+					</div>
+				</div>
+			</div>
 			@RenderBody()
 		</main>
 	</div>
@@ -54,5 +118,21 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	@await RenderSectionAsync("Scripts", required: false)
+	<script type="text/javascript">
+		@if (error != null)
+		{
+			<text>
+							$("#errorModal").modal("show")
+			</text>
+		}
+	</script>
+	<script type="text/javascript">
+		@if (success != null)
+		{
+			<text>
+							$("#successModal").modal("show")
+			</text>
+		}
+	</script>
 </body>
 </html>
