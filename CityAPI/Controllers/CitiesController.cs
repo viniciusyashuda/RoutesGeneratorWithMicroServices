@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using CityAPI.Models;
 using CityAPI.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityAPI.Controllers

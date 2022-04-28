@@ -37,6 +37,8 @@ namespace RoutesGeneratorWithMicroServices.Services
             {
                 foreach (var item in services)
                 {
+                    string othersString = "";
+
                     foreach (var header in headers)
                     {
                         if (header == "OS")
@@ -60,20 +62,20 @@ namespace RoutesGeneratorWithMicroServices.Services
                     {
 
                         string line = "";
-                        string othersString = "";
 
                         foreach (var other in others)
                         {
                             othersString = othersString + other;
                         }
 
-                        line = "\n\nROTA TRABALHO - " + DateTime.Now.ToShortDateString() + "\n\n"
+                        line = "\n\nROTA TRABALHO - " + DateTime.Now.ToString("dd/MM/yyyy") + "\n"
                             + $"\nSERVIÇO: {service}"
                             + $"\nTIME: {teams[teamCount]}, " + $"CIDADE: {city}"
                             + $"\n{@base}"
-                            + $"\n{address} {number}   {cep}"
+                            + $"\n{address} {number}"
+                            + $"\n{cep}"
                             + $"\n{district} {complement}"
-                            + $"\n{othersString}";
+                            + $"{othersString}";
 
                         count++;
 
@@ -84,6 +86,7 @@ namespace RoutesGeneratorWithMicroServices.Services
                         }
                         streamwriter.WriteLine(line);
                     }
+                    others.Clear();
                 }
 
             }

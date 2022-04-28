@@ -5,7 +5,7 @@
 	string test = @ViewBag.Role;
 }
 
-<h1>Índice</h1>
+<h1>Usuário</h1>
 @if (ViewBag.Authenticate)
 {
 	<div class="col-2 text-center">
@@ -14,9 +14,9 @@
 			<u><input class="btn btn-link text-dark pb-1" type="submit" value="Sair?" /></u>
 		</form>
 	</div>
-		<p>
-			<a asp-action="Create">Criar conta</a>
-		</p>
+	<p>
+		<a asp-action="Create">Criar conta</a>
+	</p>
 }
 else
 {

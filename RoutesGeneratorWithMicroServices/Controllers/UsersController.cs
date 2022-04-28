@@ -14,7 +14,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // GET: Users
         public IActionResult Index()
         {
-            string user = "Anonymous";
+            string user;
             bool authenticate = false;
 
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -30,12 +30,12 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             else
             {
                 user = "Not logged!";
-                authenticate = false;
                 ViewBag.Role = "";
             }
 
             ViewBag.User = user;
             ViewBag.Authenticate = authenticate;
+
             return View();
         }
 
@@ -43,8 +43,8 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(User user)
         {
-            string login = Request.Form["login"];
-            string password = Request.Form["password"];
+            //string login = Request.Form["login"];
+            //string password = Request.Form["password"];
 
             var userFound = await UserQueries.GetUserByLogin(user.Login);
 
@@ -73,21 +73,18 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
+
             return RedirectToAction(nameof(Index));
         }
         // GET: Users/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var user = await UserQueries.GetUserById(id);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return View(user);
         }
@@ -101,6 +98,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 TempData["error"] = "Usuário não permitido!";
                 return RedirectToAction(nameof(Index));
             }
+
             return View();
         }
 
@@ -117,6 +115,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 TempData["success"] = "Usuário criado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(user);
         }
 
@@ -124,15 +123,12 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var user = await UserQueries.GetUserById(id);
             if (user == null)
-            {
                 return NotFound();
-            }
+
             return View(user);
         }
 
@@ -144,9 +140,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public IActionResult Edit(string id, [Bind("Id,Name,Login,Password")] User user)
         {
             if (id != user.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -157,16 +151,14 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (UserExists(user.Id) == null)
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(user);
         }
 
@@ -174,15 +166,11 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var user = await UserQueries.GetUserById(id);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return View(user);
         }
@@ -195,11 +183,13 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var user = await UserQueries.GetUserById(id);
             if (user == null)
                 return NotFound();
+
             UserQueries.DeleteUser(id);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<User> UserExists(string id)
+        private static async Task<User> UserExists(string id)
         {
             return await UserQueries.GetUserById(id);
         }

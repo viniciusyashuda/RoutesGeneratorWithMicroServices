@@ -45,11 +45,11 @@ namespace TeamAPI.Services
 
                 if (membertemp == null)
                     return null;
-                else if (membertemp.Status == "In a team")
+                else if (membertemp.Status == "Em um time")
                     return null;
                 else
                 {
-                    membertemp.Status = "In a team";
+                    membertemp.Status = "Em um time";
                     PersonQueries.UpdatePersonStatus(membertemp.Name, membertemp);
                     temp_memberslist.Add(membertemp);
                 }
@@ -80,7 +80,7 @@ namespace TeamAPI.Services
                     return null;
                 else
                 {
-                    membertemp.Status = "In a team";
+                    membertemp.Status = "Em um time";
                     PersonQueries.UpdatePersonStatus(membertemp.Name, membertemp);
                     temp_memberslist.Add(membertemp);
                 }
@@ -105,7 +105,7 @@ namespace TeamAPI.Services
 
             foreach (var member in team.Members)
             {
-                member.Status = "No team";
+                member.Status = "Em um time";
                 PersonQueries.UpdatePersonStatus(member.Name, member);
             }
             _team.DeleteOne(team => team.Id == id);

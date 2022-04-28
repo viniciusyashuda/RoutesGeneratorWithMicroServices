@@ -14,6 +14,6 @@ namespace PersonAPI.Models
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("status")]
-        public string Status { get; set; } = "No team";
+        public string Status { get; set; } = "Sem time";
     }
 }

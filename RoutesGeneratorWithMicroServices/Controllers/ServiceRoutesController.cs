@@ -20,7 +20,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         }
         public IActionResult Index()
         {
-            string user = "Anonymous";
+            string user;
             bool authenticate = false;
 
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -36,32 +36,26 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             else
             {
                 user = "Not logged!";
-                authenticate = false;
                 ViewBag.Role = "";
             }
 
             ViewBag.User = user;
             ViewBag.Authenticate = authenticate;
             ViewBag.Headers = ReadFile.ReadHeader(_appEnvironment.WebRootPath);
+
             return View();
         }
 
         public IActionResult ServiceChoice()
         {
-            var selectedHeaders = Request.Form["Column"].ToList();
+            var selectedHeaders = Request.Form["header"].ToList();
             List<string> services = new();
 
-            if (!selectedHeaders.Contains("OS") ||
-                !selectedHeaders.Contains("CIDADE") ||
-                !selectedHeaders.Contains("BASE") ||
-                !selectedHeaders.Contains("SERVIÇO") ||
-                !selectedHeaders.Contains("ENDEREÇO") ||
-                !selectedHeaders.Contains("NUMERO") ||
-                !selectedHeaders.Contains("COMPLEMENTO") ||
-                !selectedHeaders.Contains("CEP") ||
-                !selectedHeaders.Contains("BAIRRO"))
+            if (!selectedHeaders.Contains("OS") || !selectedHeaders.Contains("CIDADE") || !selectedHeaders.Contains("BASE") ||
+                !selectedHeaders.Contains("SERVIÇO") || !selectedHeaders.Contains("ENDEREÇO") || !selectedHeaders.Contains("NUMERO") ||
+                !selectedHeaders.Contains("COMPLEMENTO") || !selectedHeaders.Contains("CEP") || !selectedHeaders.Contains("BAIRRO"))
             {
-                TempData["error"] = "As colunas: OS, CIDADE, BASE, SERVIÇO, ENDEREÇO, NUMERO, COMPLEMENTO, CEP E BAIRRO são obrigatórias!";
+                TempData["error"] = "As colunas: 'OS', 'CIDADE', 'BASE', 'SERVIÇO', 'ENDEREÇO', 'NUMERO', 'COMPLEMENTO', 'CEP' E 'BAIRRO' precisam ser selecionadas!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -71,6 +65,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 
             ViewBag.Services = services.Distinct().ToList();
             ViewBag.SelectedHeaders = selectedHeaders;
+
             return View();
         }
 
@@ -87,6 +82,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             ViewBag.Cities = cities.Distinct().ToList();
             ViewBag.Service = service;
             ViewBag.Headers = selectedHeaders;
+
             return View();
         }
 
@@ -96,17 +92,18 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var servicerequest = Request.Form["service"].ToString();
 
             var teams = await TeamQueries.GetAllTeams();
-            List<Team> teamsInCity = new();
             var service = servicerequest.Replace(",", "");
+            List<Team> teamsInCity = new();
 
             foreach (var team in teams)
-                if (team.City.Name == city)
+                if (team.City.Name.ToUpper() == city.ToUpper())
                     teamsInCity.Add(team);
 
             ViewBag.ServiceToWrite = service;
             ViewBag.TeamsToWrite = teamsInCity;
             ViewBag.HeadersToWrite = selectedHeaders;
             ViewBag.CityToWrite = city;
+
             return View();
         }
 
@@ -120,13 +117,14 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var service = servicerequest.Replace(",", "");
             var city = cityrequest.Replace(",", "");
 
-            if(teams.Count == 0)
+            if (teams.Count == 0)
             {
                 TempData["error"] = "Ao menos um time deve ser selecionado!";
                 return RedirectToAction(nameof(Index));
             }
 
             new WriteFile().WriteDocxFile(selectedHeaders, teams, service, city, _appEnvironment.WebRootPath);
+
             TempData["success"] = "Documento gerado com sucesso!";
             return View();
         }
@@ -137,6 +135,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             var pathFinal = folder + "RoutesRelatory.docx";
             byte[] bytes = System.IO.File.ReadAllBytes(pathFinal);
             string contentType = "application/octet-stream";
+
             return File(bytes, contentType, "RoutesRelatory.docx");
         }
 

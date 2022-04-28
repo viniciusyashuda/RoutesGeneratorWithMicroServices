@@ -11,7 +11,7 @@
 		<div class="form-group">
 			@foreach (var team in ViewBag.TeamsToWrite)
 			{
-				<input type="checkbox" id="team" name="team" value=@team.Name >
+				<input type="checkbox" id="team" name="team" value=@team.Name>
 				<label for="@team.Name"> @team.Name </label>
 				<br />
 			}

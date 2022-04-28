@@ -15,7 +15,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // GET: Teams
         public async Task<IActionResult> Index()
         {
-            string user = "Anonymous";
+            string user;
             bool authenticate = false;
 
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -31,7 +31,6 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             else
             {
                 user = "Not logged!";
-                authenticate = false;
                 ViewBag.Role = "";
             }
 
@@ -105,6 +104,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 TempData["success"] = "Time criado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(team);
         }
 
@@ -140,6 +140,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             ViewBag.TeamMembers = team.Members;
             ViewBag.People = peopleWithoutTeam;
             ViewBag.Cities = await CityQueries.GetAllCities();
+
             return View(team);
         }
 
@@ -193,12 +194,12 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                         return NotFound();
                     }
                     else
-                    {
                         throw;
-                    }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(team);
         }
 

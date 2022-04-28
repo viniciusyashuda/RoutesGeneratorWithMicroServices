@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PersonAPI.Models;
 using PersonAPI.Services;
@@ -34,17 +33,6 @@ namespace PersonAPI.Controllers
         public ActionResult<Person> GetByName(string name)
         {
             var person = _person.GetByName(name);
-
-            if (person == null)
-                return NotFound();
-
-            return person;
-        }
-
-        [HttpGet("status/{status}")]
-        public ActionResult<List<Person>> GetByStatus(string status)
-        {
-            var person = _person.GetByStatus(status);
 
             if (person == null)
                 return NotFound();
