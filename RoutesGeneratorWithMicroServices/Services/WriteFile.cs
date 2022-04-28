@@ -11,6 +11,12 @@ namespace RoutesGeneratorWithMicroServices.Services
         {
             List<IDictionary<string, string>> content = ReadFile.ReadExcelFile(headers, pathWebRoot);
             List<IDictionary<string, string>> services = new();
+            List<string> others = new();
+            string os, @base = "", cep = "", address = "", number = "", district = "", complement = "";
+            string path = pathWebRoot + "\\file\\RoutesRelatory.docx";
+            int count = 0;
+            int teamCount = 0;
+            int servicesPerTeam;
 
             foreach (var item in content)
             {
@@ -18,7 +24,6 @@ namespace RoutesGeneratorWithMicroServices.Services
                     services.Add(item);
             }
 
-            int servicesPerTeam;
 
             if (services.Count > teams.Count)
                 servicesPerTeam = services.Count / teams.Count;
@@ -27,11 +32,6 @@ namespace RoutesGeneratorWithMicroServices.Services
             else
                 servicesPerTeam = 1;
 
-            List<string> others = new();
-            string os = "", @base = "", cep = "", address = "", number = "", district = "", complement = "";
-            int count = 0;
-            int teamCount = 0;
-            string path = pathWebRoot + "\\file\\RoutesRelatory.docx";
 
             using (StreamWriter streamwriter = new StreamWriter(path, false, Encoding.GetEncoding("iso-8859-1")))
             {
@@ -60,7 +60,6 @@ namespace RoutesGeneratorWithMicroServices.Services
                     }
                     if (count < servicesPerTeam)
                     {
-
                         string line = "";
 
                         foreach (var other in others)
