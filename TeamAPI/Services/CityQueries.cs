@@ -22,7 +22,7 @@ namespace TeamAPI.Services
             }
             catch
             {
-                return null;   
+                return null;
             }
         }
 

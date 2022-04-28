@@ -25,23 +25,20 @@ namespace PersonAPI.Services
         public Person GetByName(string name) =>
             _person.Find(person => person.Name == name).FirstOrDefault();
 
-        public List<Person> GetByStatus(string status) =>
-            _person.Find(person => person.Name == status).ToList();
-
         public Person Create(Person person)
         {
             if (GetByName(person.Name) != null)
                 return null;
 
-            person.Status = "No team";
+            person.Status = "Sem time";
             _person.InsertOne(person);
             return person;
         }
 
         public Person Update(string id, Person personIn)
         {
-            var check = GetByName(personIn.Name);
-            if (check != null && check.Id != personIn.Id)
+            var personFound = GetByName(personIn.Name);
+            if (personFound != null && personFound.Id != personIn.Id)
                 return null;
 
             _person.ReplaceOne(person => person.Id == id, personIn);
@@ -49,8 +46,8 @@ namespace PersonAPI.Services
         }
         public Person UpdateByName(string name, Person personIn)
         {
-            var check = GetByName(personIn.Name);
-            if (check != null && check.Id != personIn.Id)
+            var personFound = GetByName(personIn.Name);
+            if (personFound != null && personFound.Id != personIn.Id)
                 return null;
 
             _person.ReplaceOne(person => person.Name == name, personIn);

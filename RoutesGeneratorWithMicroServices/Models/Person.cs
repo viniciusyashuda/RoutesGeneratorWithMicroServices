@@ -16,6 +16,6 @@ namespace RoutesGeneratorWithMicroServices.Models
         public string Name { get; set; }
         [JsonProperty("status")]
         [Display(Name = "Situação")]
-        public string Status { get; set; } = "No team";
+        public string Status { get; set; } = "Sem time";
     }
 }

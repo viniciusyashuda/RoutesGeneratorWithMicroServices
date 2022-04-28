@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +9,6 @@ using RoutesGeneratorWithMicroServices.Services;
 
 namespace RoutesGeneratorWithMicroServices.Controllers
 {
-    //[Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -25,7 +22,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 
         public async Task<IActionResult> Index()
         {
-            string user = "Anonymous";
+            string user;
             bool authenticate = false;
 
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -41,23 +38,25 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             else
             {
                 user = "Not logged!";
-                authenticate = false;
                 ViewBag.Role = "";
             }
 
             var users = await UserQueries.GetAllUsers();
             if (users.Count < 1)
             {
-                UserQueries.PostUser(new User() { Login = "Admin", Password = "Admin", Role = "Admin" });
+                UserQueries.PostUser(new User() { Name = "Admin", Login = "Admin", Password = "Admin", Role = "Admin" });
+
                 ViewBag.User = "Admin";
                 ViewBag.Role = "Admin";
                 ViewBag.Authenticate = true;
+
                 return RedirectToRoute(new { controller = "Users", action = "Index" });
             }
+
             ViewBag.User = user;
             ViewBag.Authenticate = authenticate;
-            return View();
 
+            return View();
         }
 
         public IActionResult Privacy()
@@ -75,7 +74,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // GET: Files/Create
         public IActionResult ReceiveFile()
         {
-            string user = "Anonymous";
+            string user;
             bool authenticate = false;
 
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -91,12 +90,12 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             else
             {
                 user = "Not logged!";
-                authenticate = false;
                 ViewBag.Role = "";
             }
 
             ViewBag.User = user;
             ViewBag.Authenticate = authenticate;
+
             return View();
         }
 
@@ -122,8 +121,10 @@ namespace RoutesGeneratorWithMicroServices.Controllers
 
                 ReadFile.OrderFile(path);
 
+                ViewData["success"] = "Arquivo recebido com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(fileReceived);
         }
     }

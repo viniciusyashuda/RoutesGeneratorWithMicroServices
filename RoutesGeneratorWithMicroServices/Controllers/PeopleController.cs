@@ -13,7 +13,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
         // GET: People
         public async Task<IActionResult> Index()
         {
-            string user = "Anonymous";
+            string user;
             bool authenticate = false;
 
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -29,7 +29,6 @@ namespace RoutesGeneratorWithMicroServices.Controllers
             else
             {
                 user = "Not logged!";
-                authenticate = false;
                 ViewBag.Role = "";
             }
 
@@ -76,6 +75,7 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                 TempData["success"] = "Pessoa criada com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
+
             return View(person);
         }
 
@@ -128,8 +128,10 @@ namespace RoutesGeneratorWithMicroServices.Controllers
                     else
                         throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(person);
         }
 

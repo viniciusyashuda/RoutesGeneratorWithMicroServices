@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -46,23 +44,6 @@ namespace TeamAPI.Services
             }
         }
 
-        public static async Task<List<Person>> GetPersonByStatus(string status)
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync("https://localhost:44358/api/People/name/" + status);
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-                var person = JsonConvert.DeserializeObject<List<Person>>(responseBody);
-
-                return person;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         public static async void UpdatePersonStatus(string name, Person personIn)
         {
             try
@@ -71,7 +52,7 @@ namespace TeamAPI.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PutAsync("https://localhost:44358/api/People/name/" + name, content);
                 response.EnsureSuccessStatusCode();
- 
+
             }
             catch
             {

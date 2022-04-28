@@ -1,8 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,11 +21,7 @@ namespace RoutesGeneratorWithMicroServices
         {
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddMvc();
-            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //.AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
-
-
             services.AddAuthentication("CookieAuthentication").AddCookie("CookieAuthentication", config =>
             {
                 config.Cookie.Name = "UserLoginCookie";

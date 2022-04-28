@@ -23,9 +23,12 @@
 
 			@foreach (var city in ViewBag.Cities)
 			{
-				<label value="@city" for="@city" id="city" name="city">@city</label>
-				<input type="radio" value="@city" for="@city" id="city" name="city" checked/>
-				<br />
+				if (city != "")
+				{
+					<input type="radio" value="@city" for="@city" id="city" name="city" checked />
+					<label value="@city" for="@city" id="city" name="city">@city</label>
+					<br />
+				}
 			}
 			<div class="form-group">
 				<input type="submit" value="Continuar" class="btn btn-primary" />

@@ -1,7 +1,6 @@
 ﻿@{
 	ViewData["Title"] = "Index";
 }
-	<h1>Índice</h1>
 @if (!ViewBag.Authenticate)
 {
 	<div class="row">
@@ -26,16 +25,15 @@ else
 			<div class="form-group">
 				<label class="control-label"></label><br />
 				@{
-					foreach (var column in ViewBag.Headers)
+					foreach (var header in ViewBag.Headers)
 					{
-						<input type="checkbox" id="Column" name="Column" value=@column>
-						<label for="@column">@column</label>
+						<input type="checkbox" value="@header" for="@header" id="header" name="header" />
+						<label for="@header">@header</label>
 						<br />
 					}
 				}
 			</div>
 			<div class="form-group">
-				<a asp-action="ServiceChoice"></a>
 				<input type="submit" value="Continuar" onclick="ServiceChoice()" class="btn btn-primary" />
 			</div>
 		</form>
