@@ -1,6 +1,6 @@
 # Projeto de gerador de rotas
 
-## Funcionalidades do projeto:
+### Funcionalidades do projeto:
 
 
 • Cadastro de cidades, pessoas, times e usuários
@@ -13,7 +13,7 @@
 
 • Escrita do relatório
 
-## Fluxo:
+### Fluxo:
 
 
 •Primeiro há a necessidade de fzer login para utilizar os recursos do programa
@@ -30,7 +30,7 @@
 
 •Download do relatório
 
-## Detalhes e como utilizar:
+### Detalhes e como utilizar:
 
 
 • Devido ao fato de a aplicação contar com a funcionalidade de login, o que impede que usuários não cadastrados tenham acesso às funcionalidades desta, por isso, na primeira iniciação é criada uma conta temporária de login "Admin" e senha "Admin". Entrando por essa conta será possível criar um novo usuário para assim seguir o fluxo.
